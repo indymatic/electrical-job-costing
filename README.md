@@ -1,3 +1,5 @@
+## Live Demo
+You can view the live app at [https://indymatic.github.io/electrical-job-costing/](https://indymatic.github.io/electrical-job-costing/).
 # Electrical Job Costing Software
 
 This project is a web-based application designed to help electricians estimate job costs by calculating the price of electrical materials (e.g., wires, conduits, outlets) based on box store pricing or custom rates. It includes a login page and a job creation portal.
