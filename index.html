@@ -3,260 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Electrical Job Costing Software</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Login</title>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useEffect } = React;
-
-    // Mock pricing data (replace with API/scraped data from Home Depot, Lowe's, etc.)
-    const mockPricing = {
-      wire: { name: "12/2 Romex Wire", boxStorePrice: 0.75, unit: "per foot" },
-      pipe: { name: "1/2\" EMT Conduit", boxStorePrice: 1.20, unit: "per foot" },
-      boxes: { name: "4x4 Metal Box", boxStorePrice: 2.50, unit: "each" },
-      switches: { name: "Single-Pole Switch", boxStorePrice: 3.00, unit: "each" },
-      plugs: { name: "Duplex Receptacle", boxStorePrice: 2.80, unit: "each" },
-      lights: { name: "LED Recessed Light", boxStorePrice: 15.00, unit: "each" },
-      gfci: { name: "GFCI Outlet", boxStorePrice: 12.00, unit: "each" },
-      panels: { name: "200A Panel", boxStorePrice: 150.00, unit: "each" },
-    };
-
-    // Login Component
-    function Login({ onLogin }) {
-      const [email, setEmail] = useState("");
-      const [password, setPassword] = useState("");
-      const [error, setError] = useState("");
-
-      const handleLogin = async (e) => {
+    const Login = () => {
+      const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-          // Mock API call to backend (replace with real endpoint)
-          const response = await fetch("/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
+        const username = e.target.email.value; // We use the email box as the username
+        const password = e.target.password.value;
+
+        fetch('http://localhost:5001/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error('Oops, something went wrong!');
+            }
+          })
+          .then(data => {
+            alert(data); // Shows "Welcome, friend!" if the login works
+          })
+          .catch(error => {
+            alert('Sorry, I don’t know you! Try again.'); // Shows if the login fails
           });
-          const data = await response.json();
-          if (data.success) {
-            onLogin(data.userId); // Pass user ID to parent
-          } else {
-            setError("Invalid credentials");
-          }
-        } catch (err) {
-          setError("Login failed. Try again.");
-        }
       };
 
       return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
-          <div className="bg-white p-8 rounded shadow-md w-96">
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
             <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                  Email
+                </label>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 p-2 w-full border rounded"
+                  id="email"
+                  name="email"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="Enter your email"
                   required
                 />
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Password</label>
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                  Password
+                </label>
                 <input
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 p-2 w-full border rounded"
+                  id="password"
+                  name="password"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="Enter your password"
                   required
                 />
               </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-              >
-                Login
-              </button>
+              <div className="flex items-center justify-between">
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  Login
+                </button>
+              </div>
             </form>
           </div>
         </div>
       );
-    }
+    };
 
-    // Job Creation Component
-    function JobPortal({ userId }) {
-      const [jobName, setJobName] = useState("");
-      const [blueprint, setBlueprint] = useState(null);
-      const [items, setItems] = useState([]);
-      const [customPricing, setCustomPricing] = useState({});
-      const [useBoxStorePricing, setUseBoxStorePricing] = useState(true);
-      const [jobType, setJobType] = useState("new build");
-
-      const addItem = (itemKey) => {
-        setItems([...items, { key: itemKey, quantity: 1, customPrice: null }]);
-      };
-
-      const updateItemQuantity = (index, quantity) => {
-        const newItems = [...items];
-        newItems[index].quantity = parseInt(quantity) || 1;
-        setItems(newItems);
-      };
-
-      const updateCustomPrice = (index, price) => {
-        const newItems = [...items];
-        newItems[index].customPrice = parseFloat(price) || null;
-        setItems(newItems);
-      };
-
-      const calculateTotal = () => {
-        return items.reduce((total, item) => {
-          const price = useBoxStorePricing && !item.customPrice
-            ? mockPricing[item.key].boxStorePrice
-            : item.customPrice || mockPricing[item.key].boxStorePrice;
-          return total + price * item.quantity;
-        }, 0).toFixed(2);
-      };
-
-      const handleSubmit = async () => {
-        const jobData = {
-          userId,
-          jobName,
-          jobType,
-          items,
-          totalCost: calculateTotal(),
-          blueprint: blueprint ? blueprint.name : null,
-          createdAt: new Date(),
-        };
-        try {
-          // Mock API call to save job (replace with real endpoint)
-          await fetch("/api/jobs", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(jobData),
-          });
-          alert("Job saved successfully!");
-        } catch (err) {
-          alert("Failed to save job.");
-        }
-      };
-
-      return (
-        <div className="p-6 max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold mb-4">Create New Job</h2>
-          <div className="bg-white p-6 rounded shadow-md">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Job Name</label>
-              <input
-                type="text"
-                value={jobName}
-                onChange={(e) => setJobName(e.target.value)}
-                className="mt-1 p-2 w-full border rounded"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Job Type</label>
-              <select
-                value={jobType}
-                onChange={(e) => setJobType(e.target.value)}
-                className="mt-1 p-2 w-full border rounded"
-              >
-                <option value="new build">New House Build</option>
-                <option value="remodel">Remodel</option>
-                <option value="kitchen remodel">Kitchen Remodel</option>
-                <option value="bathroom remodel">Bathroom Remodel</option>
-                <option value="addition">Addition</option>
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Upload Blueprint</label>
-              <input
-                type="file"
-                onChange={(e) => setBlueprint(e.target.files[0])}
-                className="mt-1 p-2 w-full border rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Pricing Source</label>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={useBoxStorePricing}
-                  onChange={() => setUseBoxStorePricing(!useBoxStorePricing)}
-                  className="mr-2"
-                />
-                <span>Use Box Store Pricing</span>
-              </div>
-            </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold">Add Electrical Items</h3>
-              <div className="grid grid-cols-3 gap-2">
-                {Object.keys(mockPricing).map((key) => (
-                  <button
-                    key={key}
-                    onClick={() => addItem(key)}
-                    className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-                  >
-                    Add {mockPricing[key].name}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold">Selected Items</h3>
-              {items.map((item, index) => (
-                <div key={index} className="flex items-center mb-2">
-                  <span className="w-1/3">{mockPricing[item.key].name}</span>
-                  <input
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) => updateItemQuantity(index, e.target.value)}
-                    className="w-1/6 p-1 border rounded"
-                    min="1"
-                  />
-                  <span className="w-1/6 mx-2">{mockPricing[item.key].unit}</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder={mockPricing[item.key].boxStorePrice}
-                    onChange={(e) => updateCustomPrice(index, e.target.value)}
-                    className="w-1/6 p-1 border rounded"
-                    disabled={useBoxStorePricing}
-                  />
-                  <span className="w-1/6 mx-2">$/unit</span>
-                </div>
-              ))}
-            </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold">Total Estimated Cost: ${calculateTotal()}</h3>
-            </div>
-            <button
-              onClick={handleSubmit}
-              className="bg-green-600 text-white p-2 rounded hover:bg-green-700"
-            >
-              Save Job
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    // Main App Component
-    function App() {
-      const [userId, setUserId] = useState(null);
-
-      return userId ? <JobPortal userId={userId} /> : <Login onLogin={setUserId} />;
-    }
-
-    // Render the app
-    ReactDOM.render(<App />, document.getElementById("root"));
+    ReactDOM.render(<Login />, document.getElementById('root'));
   </script>
 </body>
 </html>

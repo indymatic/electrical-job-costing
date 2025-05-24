@@ -9,7 +9,7 @@ app.use(express.json());
 
 // This is the special line that talks to the toy box (MongoDB)
 // We’ll change the secret code in a minute!
-mongoose.connect('mongodb+srv://admin:MySecurePass123@cluster0.mongodb.net/electrical-job-costing?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://admin:admin@cluster0.mongodb.net/electrical-job-costing?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));// This is a little test to see if our magic door works
 app.get('/api', (req, res) => {
