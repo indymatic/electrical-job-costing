@@ -1,5 +1,19 @@
 {
+<<<<<<< HEAD
   "dependencies": {
     "http-server": "^14.1.1"
   }
 }
+=======
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.0.0"
+  }
+}
+>>>>>>> cbd17070ba4b871201e5b3e9d20bc576b0b93abc
