@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Circle City Estimator/Job Tracker</title>
+  <title>Ackme Estimator ⚡</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -31,6 +31,7 @@
       background: #2A2F30;
       margin: 1rem;
       box-sizing: border-box;
+      text-align: center;
     }
     .header {
       display: flex;
@@ -44,13 +45,21 @@
       color: #E82127;
       font-size: 1.5rem;
     }
+    .header .logo-icon {
+      font-size: 2rem;
+      color: #E82127;
+      margin-right: 0.5rem;
+    }
+    .company-logo {
+      height: 40px;
+      margin-right: 0.5rem;
+    }
     h1, h2 {
       font-weight: 600;
       text-transform: uppercase;
     }
     h1 {
       font-size: 1.5rem;
-      text-align: center;
     }
     h2 {
       font-size: 1.1rem;
@@ -117,6 +126,8 @@
     .table-container {
       overflow-x: auto;
       width: 100%;
+      margin-left: auto;
+      margin-right: auto;
     }
     table {
       border-radius: 8px;
@@ -124,6 +135,7 @@
       background: #2A2F30;
       width: 100%;
       border-collapse: collapse;
+      margin: 0 auto;
     }
     thead tr {
       background: #3A4041;
@@ -136,6 +148,33 @@
     }
     tbody tr:hover {
       background: #353A3B;
+    }
+    .store-search-section {
+      margin: 1rem auto;
+      padding: 1rem;
+      background: #3A4041;
+      border-radius: 8px;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+    }
+    .store-search-section p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      color: #FFFFFF;
+    }
+    .store-link-button {
+      display: inline-block;
+      background: #E82127;
+      color: #FFFFFF;
+      padding: 0.5rem 1rem;
+      margin: 0.25rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+    .store-link-button:hover {
+      background: #C71B22;
     }
     .text-gray-600 {
       color: #B0B0B0;
@@ -154,6 +193,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
+      justify-content: center;
     }
     .bg-gray-500 {
       background: #4A5051;
@@ -175,6 +215,7 @@
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 1rem;
       margin-bottom: 1rem;
+      justify-items: center;
     }
     .dashboard-card {
       padding: 0.75rem;
@@ -182,6 +223,8 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       background: #3A4041;
       text-align: center;
+      width: 100%;
+      max-width: 200px;
     }
     .dashboard-card h3 {
       font-size: 0.9rem;
@@ -208,8 +251,9 @@
       background: #3A4041;
       padding: 1rem;
       border-radius: 8px;
-      margin: 1rem 0;
+      margin: 1rem auto;
       box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
     }
     .suggestions p {
       margin: 0.5rem 0;
@@ -220,11 +264,13 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
+      justify-items: center;
     }
     .grid-cols-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
+      justify-items: center;
     }
     @media (max-width: 768px) {
       .container {
@@ -258,6 +304,7 @@
       }
       .dashboard-card {
         padding: 0.5rem;
+        max-width: 150px;
       }
       .dashboard-card h3 {
         font-size: 0.8rem;
@@ -282,6 +329,11 @@
       .space-x-4 button {
         width: 100%;
         max-width: 200px;
+      }
+      .store-link-button {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        margin: 0.2rem;
       }
     }
     @media (max-width: 480px) {
@@ -315,6 +367,10 @@
         font-size: 0.7rem;
         padding: 0.3rem;
       }
+      .store-link-button {
+        padding: 0.4rem;
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
@@ -333,20 +389,21 @@
       const [isSigningUp, setIsSigningUp] = useState(false);
       const [message, setMessage] = useState('');
       const [jobs, setJobs] = useState([]);
-      const [jobName, setJobName] = useState('');
-      const [createdBy, setCreatedBy] = useState('');
-      const [dateEntered, setDateEntered] = useState('');
+      const [pendingJob, setPendingJob] = useState({
+        jobName: '',
+        createdBy: '',
+        dateEntered: '',
+        jobType: 'Residential'
+      });
       const [selectedJobId, setSelectedJobId] = useState(null);
       const [costEstimates, setCostEstimates] = useState({});
       const [costEstimate, setCostEstimate] = useState({
-        labor: { hours: "", technicians: "", pricePerHour: "", totalLaborCost: "" },
+        labor: { hours: "", pricePerHour: "", totalLaborCost: "" },
         materials: [],
         materialMarkup: "",
         taxRate: "",
         specialSections: [],
-        totalCost: "",
-        runningCost: "",
-        nextSteps: ''
+        totalCost: ""
       });
       const [newMaterial, setNewMaterial] = useState({ name: '', cost: '', quantity: '' });
       const [newCustomMaterial, setNewCustomMaterial] = useState({ name: '', cost: '' });
@@ -355,32 +412,107 @@
       const [isLoadingJob, setIsLoadingJob] = useState(false);
       const [materialType, setMaterialType] = useState('Residential');
       const [customMaterials, setCustomMaterials] = useState([]);
-      const [suggestions, setSuggestions] = useState({ averageCost: "", minCost: "", maxCost: "", count: 0 });
+      const [isNavigating, setIsNavigating] = useState(false);
+      const [storeSearchQuery, setStoreSearchQuery] = useState('');
+      const [suggestedPrice, setSuggestedPrice] = useState(null);
 
-      // Use environment variable for server URL
-      const SERVER_URL = process.env.SERVER_URL || 'http://localhost:5000';
+      useEffect(() => {
+        const cachedCustomMaterials = localStorage.getItem('customMaterials');
+        if (cachedCustomMaterials) {
+          const parsedCustomMaterials = JSON.parse(cachedCustomMaterials);
+          setCustomMaterials(parsedCustomMaterials);
+          console.log('Loaded custom materials from localStorage:', parsedCustomMaterials);
+        } else {
+          console.log('No custom materials found in localStorage.');
+        }
+      }, []);
 
-      // Cache system: Load jobs and estimates from localStorage if available
+      useEffect(() => {
+        if (customMaterials.length > 0) {
+          localStorage.setItem('customMaterials', JSON.stringify(customMaterials));
+          console.log('Saved custom materials to localStorage:', customMaterials);
+        }
+      }, [customMaterials]);
+
       useEffect(() => {
         const cachedJobs = localStorage.getItem('cachedJobs');
         const cachedEstimates = localStorage.getItem('cachedCostEstimates');
         if (cachedJobs) {
-          setJobs(JSON.parse(cachedJobs));
+          const parsedJobs = JSON.parse(cachedJobs);
+          const validatedJobs = parsedJobs.map(job => ({
+            ...job,
+            jobType: job.jobType || 'Residential'
+          }));
+          console.log('Loaded jobs from localStorage:', validatedJobs);
+          setJobs(validatedJobs);
+        } else {
+          console.log('No cached jobs found in localStorage.');
         }
         if (cachedEstimates) {
           setCostEstimates(JSON.parse(cachedEstimates));
+          console.log('Loaded cost estimates from localStorage:', costEstimates);
+        } else {
+          console.log('No cached cost estimates found in localStorage.');
         }
       }, []);
 
-      // Save jobs and estimates to localStorage whenever they change
       useEffect(() => {
         if (jobs.length > 0) {
           localStorage.setItem('cachedJobs', JSON.stringify(jobs));
+          console.log('Saved jobs to localStorage:', jobs);
         }
         if (Object.keys(costEstimates).length > 0) {
           localStorage.setItem('cachedCostEstimates', JSON.stringify(costEstimates));
+          console.log('Saved cost estimates to localStorage:', costEstimates);
         }
       }, [jobs, costEstimates]);
+
+      useEffect(() => {
+        if (currentPage === 'dashboard' || currentPage === 'login') {
+          console.log('Clearing selectedJobId and resetting state for page:', currentPage);
+          setSelectedJobId(null);
+          setIsLoadingJob(false);
+          setIsNavigating(false);
+          setCostEstimate({
+            labor: { hours: "", pricePerHour: "", totalLaborCost: "" },
+            materials: [],
+            materialMarkup: "",
+            taxRate: "",
+            specialSections: [],
+            totalCost: ""
+          });
+          setStoreSearchQuery('');
+          setSuggestedPrice(null);
+        }
+      }, [currentPage]);
+
+      useEffect(() => {
+        console.log('bs state updated:', jobs);
+      }, [jobs]);
+
+      useEffect(() => {
+        if (selectedJobId && currentPage === 'estimate' && !isNavigating) {
+          console.log('Attempting to load job with selectedJobId:', selectedJobId);
+          console.log('Current jobs state:', jobs);
+          const selectedJob = jobs.find(job => job._id === selectedJobId);
+          if (!selectedJob) {
+            console.log('Job not found for selectedJobId:', selectedJobId);
+            setMessage('Oops! Job not found. Let’s go back to the dashboard.');
+            setIsLoadingJob(false);
+            setSelectedJobId(null);
+            setCurrentPage('dashboard');
+            return;
+          }
+          console.log('Found job:', selectedJob);
+          setIsLoadingJob(true);
+          fetchCostEstimate(selectedJobId).catch(error => {
+            console.error("Error fetching cost estimate:", error);
+            setMessage('Oops! Couldn’t load the estimate. Using cached data if available.');
+          }).finally(() => {
+            setIsLoadingJob(false);
+          });
+        }
+      }, [selectedJobId, currentPage, isNavigating, jobs]);
 
       const residentialMaterials = [
         { name: "Romex 14/2 (per foot)" },
@@ -420,137 +552,83 @@
         }
       }, [isLoggedIn]);
 
-      useEffect(() => {
-        if (selectedJobId) {
-          const selectedJob = jobs.find(job => job._id === selectedJobId);
-          if (!selectedJob) {
-            setMessage('Oops! Job not found. Let’s go back to the dashboard.');
-            setIsLoadingJob(false);
-            setSelectedJobId(null);
-            return;
-          }
-          setIsLoadingJob(true);
-          Promise.all([
-            fetchCostEstimate(selectedJobId).catch(error => {
-              console.error("Error fetching cost estimate:", error);
-              setMessage('Oops! Couldn’t load the estimate. Using cached data if available.');
-              return null;
-            }),
-            fetchSuggestions(selectedJob.jobName || '').catch(error => {
-              console.error("Error fetching suggestions:", error);
-              setMessage('Oops! Couldn’t load suggestions. Using default values.');
-              return null;
-            })
-          ]).finally(() => {
-            setIsLoadingJob(false);
-          });
-        }
-      }, [selectedJobId, jobs]);
-
       const fetchJobs = async () => {
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/jobs`, { signal: controller.signal });
-          clearTimeout(timeoutId);
+          const response = await fetch('http://localhost:5000/api/jobs', { timeout: 5000 });
           if (!response.ok) throw new Error('Failed to fetch jobs');
           const data = await response.json();
-          setJobs(data);
+          const validatedJobs = data.map(job => ({
+            ...job,
+            jobType: job.jobType || 'Residential'
+          }));
+          console.log('Fetched and validated jobs from server:', validatedJobs);
+          setJobs(validatedJobs);
         } catch (error) {
           console.error('Error fetching jobs:', error);
-          if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. Using cached data if available.');
-          } else {
-            setMessage('Oops! Couldn’t load jobs from the server. Using cached data if available.');
-          }
+          setMessage('Oops! Couldn’t load jobs from the server. Using cached data if available. Check if the backend server is running at http://localhost:5000.');
         }
       };
 
       const fetchAllCostEstimates = async () => {
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/cost-estimates`, { signal: controller.signal });
-          clearTimeout(timeoutId);
+          const response = await fetch('http://localhost:5000/api/cost-estimates', { timeout: 5000 });
           if (!response.ok) throw new Error('Failed to fetch cost estimates');
           const data = await response.json();
           const estimatesMap = {};
           data.forEach(estimate => {
             estimatesMap[estimate.jobId] = {
               totalCost: estimate.totalCost || "",
-              runningCost: estimate.runningCost || "",
-              nextSteps: estimate.nextSteps || ''
+              labor: estimate.labor || { hours: "", pricePerHour: "", totalLaborCost: "" },
+              materials: estimate.materials || [],
+              materialMarkup: estimate.materialMarkup || "",
+              taxRate: estimate.taxRate || "",
+              specialSections: estimate.specialSections || []
             };
           });
           setCostEstimates(estimatesMap);
+          console.log('Fetched cost estimates from server:', estimatesMap);
         } catch (error) {
           console.error('Error fetching cost estimates:', error);
-          if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. Using cached data if available.');
-          } else {
-            setMessage('Oops! Couldn’t load cost estimates from the server. Using cached data if available.');
-          }
+          setMessage('Oops! Couldn’t load cost estimates from the server. Using cached data if available. Check if the backend server is running at http://localhost:5000.');
         }
       };
 
       const fetchCostEstimate = async (jobId) => {
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/cost-estimates/${jobId}`, { signal: controller.signal });
-          clearTimeout(timeoutId);
+          const response = await fetch(`http://localhost:5000/api/cost-estimates/${jobId}`, { timeout: 5000 });
+          if (!response.ok) throw new Error('Failed to fetch cost estimate');
           const data = await response.json();
           if (data && Object.keys(data).length > 0) {
             setCostEstimate({
               ...data,
               labor: {
                 hours: data.labor.hours || "",
-                technicians: data.labor.technicians || "",
                 pricePerHour: data.labor.pricePerHour || "",
                 totalLaborCost: data.labor.totalLaborCost || ""
-              },
-              runningCost: data.runningCost || "",
-              nextSteps: data.nextSteps || ''
+              }
             });
+            console.log('Fetched cost estimate for jobId:', jobId, data);
           } else {
             setCostEstimate({
-              labor: { hours: "", technicians: "", pricePerHour: "", totalLaborCost: "" },
+              labor: { hours: "", pricePerHour: "", totalLaborCost: "" },
               materials: [],
               materialMarkup: "",
               taxRate: "",
               specialSections: [],
-              totalCost: "",
-              runningCost: "",
-              nextSteps: ''
+              totalCost: ""
             });
+            console.log('No cost estimate found for jobId:', jobId, 'resetting to default');
           }
         } catch (error) {
           setCostEstimate({
-            labor: { hours: "", technicians: "", pricePerHour: "", totalLaborCost: "" },
+            labor: { hours: "", pricePerHour: "", totalLaborCost: "" },
             materials: [],
             materialMarkup: "",
             taxRate: "",
             specialSections: [],
-            totalCost: "",
-            runningCost: "",
-            nextSteps: ''
+            totalCost: ""
           });
-          throw error;
-        }
-      };
-
-      const fetchSuggestions = async (jobName) => {
-        if (!jobName) return;
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/suggestions/${encodeURIComponent(jobName)}`, { signal: controller.signal });
-          clearTimeout(timeoutId);
-          const data = await response.json();
-          setSuggestions(data);
-        } catch (error) {
-          console.error("Error fetching suggestions:", error);
-          setSuggestions({ averageCost: "", minCost: "", maxCost: "", count: 0 });
+          console.error('Error fetching cost estimate for jobId:', jobId, error);
           throw error;
         }
       };
@@ -559,8 +637,8 @@
         e.preventDefault();
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/login`, {
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+          const response = await fetch('http://localhost:5000/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password }),
@@ -572,15 +650,19 @@
           if (response.ok) {
             setIsLoggedIn(true);
             setUsername(data.username);
-            setCreatedBy(data.username);
+            setPendingJob(prev => ({ ...prev, createdBy: data.username }));
             setCurrentPage('dashboard');
+            setSelectedJobId(null);
+            setIsLoadingJob(false);
+            setIsNavigating(false);
+            console.log('Logged in successfully, navigating to dashboard. Username:', data.username);
           }
         } catch (error) {
           console.error('Error logging in:', error);
           if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. Please check if the server is running.');
+            setMessage('Oops! The server took too long to respond. Please check if the server is running at http://localhost:5000.');
           } else {
-            setMessage('Oops! Something went wrong. Make sure the server is running.');
+            setMessage('Oops! Something went wrong. Make sure the server is running at http://localhost:5000.');
           }
         }
       };
@@ -593,8 +675,8 @@
         }
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/signup`, {
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+          const response = await fetch('http://localhost:5000/api/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password }),
@@ -605,75 +687,143 @@
           setMessage(data);
           if (response.ok) {
             setIsSigningUp(false);
+            console.log('Sign-up successful, switching to login page.');
           }
         } catch (error) {
           console.error('Error signing up:', error);
           if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. Please check if the server is running.');
+            setMessage('Oops! The server took too long to respond. Please check if the server is running at http://localhost:5000.');
           } else {
-            setMessage('Oops! Something went wrong. Make sure the server is running.');
+            setMessage('Oops! Something went wrong. Make sure the server is running at http://localhost:5000.');
           }
         }
       };
 
+      const suggestPrice = (newJob) => {
+        const pastJobs = jobs.filter(job => job.jobType === newJob.jobType && costEstimates[job._id]?.totalCost);
+        if (pastJobs.length === 0) return null;
+
+        let totalCost = 0;
+        let count = 0;
+
+        pastJobs.forEach(job => {
+          const jobCost = parseFloat(costEstimates[job._id]?.totalCost || 0);
+          if (jobCost > 0) {
+            totalCost += jobCost;
+            count++;
+          }
+        });
+
+        if (count === 0) return null;
+        const avgCost = totalCost / count;
+
+        let adjustment = 0;
+        if (newJob.jobName.toLowerCase().includes('complex') || newJob.jobName.toLowerCase().includes('large')) {
+          adjustment += avgCost * 0.2;
+        }
+        if (newJob.jobName.toLowerCase().includes('outdoor')) {
+          adjustment += avgCost * 0.1;
+        }
+
+        return (avgCost + adjustment).toFixed(2);
+      };
+
       const handleCreateJob = async (e) => {
         e.preventDefault();
-        setMessage(''); // Clear any previous messages
-        console.log("Create Job button clicked!"); // Test if the button is working
-        if (!jobName) {
+        setMessage('');
+        if (!pendingJob.jobName) {
           setMessage('Please fill in the Job Name to create a job!');
           return;
         }
-        // Create a temporary job ID for local use
+
+        const suggested = suggestPrice(pendingJob);
+        setSuggestedPrice(suggested);
+
         const tempJobId = `temp_${Date.now()}`;
         const newJob = {
           _id: tempJobId,
-          jobName,
-          dateEntered: dateEntered || null,
-          createdBy: createdBy || username || '',
-          status: 'Planning',
-          notes: ''
+          jobName: pendingJob.jobName,
+          dateEntered: pendingJob.dateEntered || null,
+          createdBy: pendingJob.createdBy || username || '',
+          jobType: pendingJob.jobType
         };
-        // Add the job to the list right away
-        setJobs(prevJobs => [...prevJobs, newJob]);
-        setMessage('Job added locally! Trying to save it to the server...');
-        setJobName('');
-        setCreatedBy('');
-        setDateEntered('');
-        // Try to save the job to the server
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/jobs`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              jobName,
-              dateEntered: dateEntered || null,
-              createdBy: createdBy || username || '',
-              status: 'Planning',
-              notes: ''
-            }),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          if (!response.ok) {
-            const errorData = await response.text();
-            throw new Error(errorData || 'Failed to create job');
-          }
-          const savedJob = await response.json();
-          // Update the job with the real ID from the server
-          setJobs(prevJobs => prevJobs.map(job => job._id === tempJobId ? savedJob : job));
-          setMessage('Job created successfully on the server! ⚡');
-          await fetchJobs();
-        } catch (error) {
-          console.error('Error creating job:', error);
-          if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. The job is saved locally, but please check if the server is running.');
-          } else {
-            setMessage(`Oops! Something went wrong: ${error.message}. The job is saved locally, but please check the server.`);
+        setJobs(prevJobs => {
+          const updatedJobs = [...prevJobs, newJob];
+          console.log('Added job locally with ID:', tempJobId, 'New jobs state:', updatedJobs);
+          return updatedJobs;
+        });
+        setMessage(`Job added locally! ${suggested ? `Suggested price: $${suggested}` : 'No price suggestion yet.'} Trying to save it to the server...`);
+        setIsNavigating(true);
+
+        let retries = 3;
+        let success = false;
+        let lastError = null;
+
+        while (retries > 0 && !success) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            const response = await fetch('http://localhost:5000/api/jobs', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                jobName: pendingJob.jobName,
+                dateEntered: pendingJob.dateEntered || null,
+                createdBy: pendingJob.createdBy || username || '',
+                jobType: pendingJob.jobType
+              }),
+              signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+              const errorData = await response.text();
+              throw new Error(errorData || `Failed to create job on server: ${response.status} ${response.statusText}`);
+            }
+
+            const savedJob = await response.json();
+            console.log('Job saved to server with ID:', savedJob._id, 'Server response:', savedJob);
+
+            setJobs(prevJobs => {
+              const updatedJobs = prevJobs.map(job => job._id === tempJobId ? savedJob : job);
+              console.log('Updated jobs state with server ID:', savedJob._id, 'New jobs state:', updatedJobs);
+              return updatedJobs;
+            });
+            localStorage.setItem('cachedJobs', JSON.stringify(jobs.map(job => job._id === tempJobId ? savedJob : job)));
+            setMessage(`Job created successfully! ${suggested ? `Suggested price: $${suggested}` : ''} Taking you to the job details... ⚡`);
+            success = true;
+
+            setTimeout(() => {
+              setSelectedJobId(savedJob._id);
+              setCurrentPage('estimate');
+              setIsNavigating(false);
+              setIsLoadingJob(true);
+              console.log('Navigating to estimate page with selectedJobId:', savedJob._id);
+            }, 0);
+          } catch (error) {
+            console.error(`Error creating job (attempt ${4 - retries}/3):`, error);
+            lastError = error;
+            retries--;
+            if (retries > 0) {
+              console.log(`Retrying... (${retries} attempts left)`);
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
           }
         }
+
+        if (!success) {
+          console.error('All attempts to create job on server failed:', lastError);
+          setMessage(`Oops! Couldn’t save job to server after multiple attempts: ${lastError.message}. Using local data with temp ID: ${tempJobId}.`);
+          setTimeout(() => {
+            setSelectedJobId(tempJobId);
+            setCurrentPage('estimate');
+            setIsNavigating(false);
+            setIsLoadingJob(true);
+            console.log('Navigating to estimate page with tempJobId:', tempJobId);
+          }, 0);
+        }
+
+        setPendingJob({ jobName: '', createdBy: '', dateEntered: '', jobType: 'Residential' });
       };
 
       const handleDeleteJob = async (id) => {
@@ -682,76 +832,33 @@
         if (!confirmDelete) return;
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/jobs/${id}`, {
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+          const response = await fetch(`http://localhost:5000/api/jobs/${id}`, {
             method: 'DELETE',
             signal: controller.signal
           });
           clearTimeout(timeoutId);
           if (!response.ok) throw new Error('Failed to delete job');
           setMessage('Job deleted successfully! ⚡');
-          setJobs(prevJobs => prevJobs.filter(job => job._id !== id));
+          const updatedJobs = jobs.filter(job => job._id !== id);
+          setJobs(updatedJobs);
+          localStorage.setItem('cachedJobs', JSON.stringify(updatedJobs));
           await fetchJobs();
           await fetchAllCostEstimates();
+          console.log('Job deleted successfully, ID:', id);
         } catch (error) {
           console.error('Error deleting job:', error);
           if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. The job is deleted locally, but please check if the server is running.');
+            setMessage('Oops! The server took too long to respond. The job is deleted locally, but please check if the server is running at http://localhost:5000.');
           } else {
-            setMessage('Oops! Something went wrong. Make sure the server is running.');
-          }
-        }
-      };
-
-      const handleUpdateJobStatus = async (id, status) => {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/jobs/${id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status }),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          if (!response.ok) throw new Error('Failed to update job status');
-          await fetchJobs();
-        } catch (error) {
-          console.error('Error updating job status:', error);
-          if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. Please check if the server is running.');
-          } else {
-            setMessage('Oops! Something went wrong. Make sure the server is running.');
-          }
-        }
-      };
-
-      const handleUpdateJobNotes = async (id, notes) => {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/jobs/${id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ notes }),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          if (!response.ok) throw new Error('Failed to update job notes');
-          await fetchJobs();
-          localStorage.setItem(`jobNotes_${id}`, notes);
-        } catch (error) {
-          console.error('Error updating job notes:', error);
-          if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. Please check if the server is running.');
-          } else {
-            setMessage('Oops! Something went wrong. Make sure the server is running.');
+            setMessage('Oops! Something went wrong. Make sure the server is running at http://localhost:5000.');
           }
         }
       };
 
       const handleSaveEstimate = async (e) => {
         e.preventDefault();
+        setMessage('');
         const job = jobs.find(job => job._id === selectedJobId);
         console.log("Job data when saving estimate:", job);
         if (!job || !job.jobName) {
@@ -759,20 +866,59 @@
           return;
         }
         const hours = parseFloat(costEstimate.labor.hours || 0);
-        const technicians = parseInt(costEstimate.labor.technicians || 0);
         const pricePerHour = parseFloat(costEstimate.labor.pricePerHour || 0);
-        const totalLaborCost = hours * technicians * pricePerHour;
+        const totalLaborCost = hours * pricePerHour;
         let materialCost = costEstimate.materials.reduce((sum, item) => sum + (parseFloat(item.cost || 0) * parseInt(item.quantity || 0)), 0);
         const markup = materialCost * (parseFloat(costEstimate.materialMarkup || 0) / 100);
+        const materialsTotal = materialCost + markup;
+        const tax = materialsTotal * (parseFloat(costEstimate.taxRate || 0) / 100);
         const specialCost = costEstimate.specialSections.reduce((sum, section) => sum + parseFloat(section.cost || 0), 0);
         const subtotal = totalLaborCost + materialCost + markup + specialCost;
-        const tax = subtotal * (parseFloat(costEstimate.taxRate || 0) / 100);
         const totalCost = subtotal + tax;
 
+        console.log('Saving estimate locally first:', { totalCost });
+        setCostEstimates(prevEstimates => {
+          const newEstimates = {
+            ...prevEstimates,
+            [selectedJobId]: { 
+              totalCost: totalCost.toFixed(2),
+              labor: { ...costEstimate.labor, totalLaborCost },
+              materials: costEstimate.materials,
+              materialMarkup: costEstimate.materialMarkup,
+              taxRate: costEstimate.taxRate,
+              specialSections: costEstimate.specialSections
+            }
+          };
+          console.log('Updated costEstimates state:', newEstimates);
+          return newEstimates;
+        });
+        setCostEstimate(prevEstimate => {
+          const newEstimate = { 
+            ...prevEstimate, 
+            totalCost: totalCost.toFixed(2)
+          };
+          console.log('Updated costEstimate state:', newEstimate);
+          return newEstimate;
+        });
+        localStorage.setItem('cachedCostEstimates', JSON.stringify({
+          ...costEstimates,
+          [selectedJobId]: { 
+            totalCost: totalCost.toFixed(2),
+            labor: { ...costEstimate.labor, totalLaborCost },
+            materials: costEstimate.materials,
+            materialMarkup: costEstimate.materialMarkup,
+            taxRate: costEstimate.taxRate,
+            specialSections: costEstimate.specialSections
+          }
+        }));
+        setMessage('Saving estimate...');
+
+        let serverSuccess = false;
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          const response = await fetch(`${SERVER_URL}/api/cost-estimates`, {
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+          console.log('Attempting to save estimate to server...');
+          const response = await fetch('http://localhost:5000/api/cost-estimates', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -782,26 +928,39 @@
               materialMarkup: costEstimate.materialMarkup,
               taxRate: costEstimate.taxRate,
               specialSections: costEstimate.specialSections,
-              totalCost,
-              runningCost: costEstimate.runningCost,
-              nextSteps: costEstimate.nextSteps
+              totalCost
             }),
             signal: controller.signal
           });
           clearTimeout(timeoutId);
-          if (!response.ok) throw new Error('Failed to save cost estimate');
-          setCostEstimate({ ...costEstimate, totalCost });
-          await fetchAllCostEstimates();
-          const selectedJob = jobs.find(job => job._id === selectedJobId);
-          if (selectedJob) await fetchSuggestions(selectedJob.jobName);
-          localStorage.setItem(`jobNextSteps_${selectedJobId}`, costEstimate.nextSteps);
-        } catch (error) {
-          console.error('Error saving cost estimate:', error);
-          if (error.name === 'AbortError') {
-            setMessage('Oops! The server took too long to respond. Please check if the server is running.');
-          } else {
-            setMessage('Oops! Something went wrong. Make sure the server is running.');
+
+          if (!response.ok) {
+            const errorData = await response.text();
+            throw new Error(errorData || 'Failed to save cost estimate');
           }
+
+          const savedEstimate = await response.json();
+          console.log('Estimate saved to server for jobId:', selectedJobId, savedEstimate);
+          serverSuccess = true;
+
+          await fetchAllCostEstimates();
+
+          setMessage('Estimate saved successfully! Returning to dashboard... ⚡');
+          setTimeout(() => {
+            setSelectedJobId(null);
+            setCurrentPage('dashboard');
+          }, 1000);
+        } catch (error) {
+          console.error('Error saving cost estimate to server for jobId:', selectedJobId, error);
+          if (error.name === 'AbortError') {
+            setMessage('Oops! The server took too long to respond. Estimate saved locally, but please check if the server is running at http://localhost:5000.');
+          } else {
+            setMessage(`Oops! Failed to save estimate to server: ${error.message}. Estimate saved locally, so your changes are safe!`);
+          }
+          setTimeout(() => {
+            setSelectedJobId(null);
+            setCurrentPage('dashboard');
+          }, 1000);
         }
       };
 
@@ -816,6 +975,7 @@
         });
         setNewMaterial({ name: '', cost: '', quantity: '' });
         setMessage('');
+        console.log('Added material to estimate:', newMaterial);
       };
 
       const handleAddCustomMaterial = () => {
@@ -823,9 +983,20 @@
           setMessage('Please enter a material name and cost!');
           return;
         }
-        setCustomMaterials([...customMaterials, { name: newCustomMaterial.name }]);
+        const newCustomMat = { name: newCustomMaterial.name };
+        setCustomMaterials(prev => {
+          if (prev.some(mat => mat.name.toLowerCase() === newCustomMaterial.name.toLowerCase())) {
+            return prev;
+          }
+          return [...prev, newCustomMat];
+        });
+        setCostEstimate({
+          ...costEstimate,
+          materials: [...costEstimate.materials, { name: newCustomMaterial.name, cost: newCustomMaterial.cost, quantity: '1' }]
+        });
         setNewCustomMaterial({ name: '', cost: '' });
         setMessage('');
+        console.log('Added custom material:', newCustomMaterial);
       };
 
       const handleAddSpecialSection = () => {
@@ -839,18 +1010,36 @@
         });
         setNewSpecialSection({ name: '', cost: '', description: '' });
         setMessage('');
+        console.log('Added special section:', newSpecialSection);
+      };
+
+      const generateStoreLink = (store, query) => {
+        const encodedQuery = encodeURIComponent(query);
+        switch (store) {
+          case 'Home Depot':
+            return `https://www.homedepot.com/s/${encodedQuery}`;
+          case "Lowe's":
+            return `https://www.lowes.com/search?searchTerm=${encodedQuery}`;
+          case 'Menards':
+            return `https://www.menards.com/main/search.html?searchTerm=${encodedQuery}`;
+          case 'Grainger':
+            return `https://www.grainger.com/search?searchQuery=${encodedQuery}`;
+          default:
+            return '#';
+        }
       };
 
       if (currentPage === 'login') {
         return (
           <div className="container">
             <div className="header">
-              <i className="fas fa-bolt"></i>
-              <h1>Circle City Estimator/Job Tracker ⚡</h1>
+              <img src="https://i.ibb.co/SXchGTtJ/ackmelogo.jpg" alt="Circle City Electrical Logo" className="company-logo" />
+              <i className="fas fa-bolt logo-icon"></i>
+              <h1>Ackme Estimator ⚡</h1>
             </div>
             {isSigningUp ? (
               <form onSubmit={handleSignUp} className="space-y-4">
-                <h2 className="text-center">Sign Up</h2>
+                <h2>Sign Up</h2>
                 <div className="relative">
                   <i className="fas fa-user"></i>
                   <input
@@ -906,7 +1095,7 @@
               </form>
             ) : (
               <form onSubmit={handleLogin} className="space-y-4">
-                <h2 className="text-center">Login</h2>
+                <h2>Login</h2>
                 <div className="relative">
                   <i className="fas fa-user"></i>
                   <input
@@ -955,21 +1144,24 @@
         );
       }
 
-      if (selectedJobId) {
+      if (currentPage === 'estimate' && selectedJobId) {
         const selectedJob = jobs.find(job => job._id === selectedJobId);
         if (isLoadingJob) {
           return (
             <div className="container">
-              <p className="text-center">Loading job details... ⏳</p>
+              <p>Loading job details... ⏳</p>
             </div>
           );
         }
         if (!selectedJob) {
           return (
             <div className="container">
-              <p className="text-center">Job not found! Please go back to the dashboard.</p>
+              <p>Job not found! Please go back to the dashboard.</p>
               <button
-                onClick={() => setSelectedJobId(null)}
+                onClick={() => {
+                  setSelectedJobId(null);
+                  setCurrentPage('dashboard');
+                }}
                 className="w-full mt-4"
               >
                 <i className="fas fa-arrow-left"></i> Back to Dashboard ⚡
@@ -979,16 +1171,15 @@
         }
 
         const hours = parseFloat(costEstimate.labor.hours || 0);
-        const technicians = parseInt(costEstimate.labor.technicians || 0);
         const pricePerHour = parseFloat(costEstimate.labor.pricePerHour || 0);
-        const totalLaborCost = hours * technicians * pricePerHour;
+        const totalLaborCost = hours * pricePerHour;
         let materialCost = costEstimate.materials.reduce((sum, item) => sum + (parseFloat(item.cost || 0) * parseInt(item.quantity || 0)), 0);
         const markup = materialCost * (parseFloat(costEstimate.materialMarkup || 0) / 100);
+        const materialsTotal = materialCost + markup;
+        const tax = materialsTotal * (parseFloat(costEstimate.taxRate || 0) / 100);
         const specialCost = costEstimate.specialSections.reduce((sum, section) => sum + parseFloat(section.cost || 0), 0);
         const subtotal = totalLaborCost + materialCost + markup + specialCost;
-        const tax = subtotal * (parseFloat(costEstimate.taxRate || 0) / 100);
         const totalCost = subtotal + tax;
-        const remainingCost = totalCost - parseFloat(costEstimate.runningCost || 0);
 
         const exportToPDF = () => {
           const { jsPDF } = window.jspdf;
@@ -997,7 +1188,7 @@
           doc.rect(0, 0, 210, 30, 'F');
           doc.setFontSize(20);
           doc.setTextColor(255, 255, 255);
-          doc.text('Circle City Estimator/Job Tracker ⚡', 20, 20);
+          doc.text('Ackme Estimator ⚡', 20, 20);
           doc.setFontSize(14);
           doc.setTextColor(0, 0, 0);
           doc.text(`Estimate for ${selectedJob.jobName}`, 20, 40);
@@ -1015,40 +1206,33 @@
           y += 10;
           doc.text(`Subtotal: $${subtotal.toFixed(2)}`, 20, y);
           y += 10;
-          doc.text(`Tax: $${tax.toFixed(2)}`, 20, y);
+          doc.text(`Tax (on Materials): $${tax.toFixed(2)}`, 20, y);
           y += 10;
           doc.text(`Estimated Total Cost: $${totalCost.toFixed(2)}`, 20, y);
-          y += 10;
-          doc.text(`Running Cost: $${parseFloat(costEstimate.runningCost || 0).toFixed(2)}`, 20, y);
-          y += 10;
-          doc.text(`Remaining Cost: $${remainingCost.toFixed(2)}`, 20, y);
-          y += 10;
-          if (costEstimate.nextSteps) {
-            doc.text(`Next Steps: ${costEstimate.nextSteps}`, 20, y);
-          }
           doc.save(`${selectedJob.jobName}_Estimate.pdf`);
+          console.log('Exported PDF for job:', selectedJob.jobName);
         };
 
         return (
           <div className="container">
             <div className="header">
+              <img src="https://i.ibb.co/SXchGTtJ/ackmelogo.jpg" alt="Circle City Electrical Logo" className="company-logo" />
               <i className="fas fa-bolt"></i>
               <h1>Estimate & Tracker for {selectedJob.jobName} ⚡</h1>
             </div>
-            <div className="flex justify-between mb-4">
+            <div className="space-x-4 mb-4">
               <button
                 onClick={() => {
                   setSelectedJobId(null);
                   setCostEstimate({
-                    labor: { hours: "", technicians: "", pricePerHour: "", totalLaborCost: "" },
+                    labor: { hours: "", pricePerHour: "", totalLaborCost: "" },
                     materials: [],
                     materialMarkup: "",
                     taxRate: "",
                     specialSections: [],
-                    totalCost: "",
-                    runningCost: "",
-                    nextSteps: ''
+                    totalCost: ""
                   });
+                  setCurrentPage('dashboard');
                 }}
               >
                 <i className="fas fa-arrow-left"></i> Back to Dashboard ⚡
@@ -1057,13 +1241,6 @@
                 <i className="fas fa-file-pdf"></i> Export to PDF ⚡
               </button>
             </div>
-            {suggestions.count > 0 && (
-              <div className="suggestions">
-                <h2>Suggested Pricing (Based on {suggestions.count} Similar Jobs) ⚡</h2>
-                <p>Average Cost: $${parseFloat(suggestions.averageCost || 0).toFixed(2)}</p>
-                <p>Range: $${parseFloat(suggestions.minCost || 0).toFixed(2)} - $${parseFloat(suggestions.maxCost || 0).toFixed(2)}</p>
-              </div>
-            )}
             <form onSubmit={handleSaveEstimate} className="space-y-4">
               <div>
                 <h2>Labor ⚡</h2>
@@ -1078,20 +1255,6 @@
                       onChange={(e) => setCostEstimate({
                         ...costEstimate,
                         labor: { ...costEstimate.labor, hours: e.target.value }
-                      })}
-                      className="p-2"
-                    />
-                  </div>
-                  <div className="relative">
-                    <i className="fas fa-users"></i>
-                    <label>Number of Electricians</label>
-                    <input
-                      type="number"
-                      placeholder="Enter number of electricians"
-                      value={costEstimate.labor.technicians}
-                      onChange={(e) => setCostEstimate({
-                        ...costEstimate,
-                        labor: { ...costEstimate.labor, technicians: e.target.value }
                       })}
                       className="p-2"
                     />
@@ -1146,10 +1309,12 @@
                     <label>Material Name</label>
                     <select
                       value={newMaterial.name}
-                      onChange={(e) => setNewMaterial({
-                        ...newMaterial,
-                        name: e.target.value
-                      })}
+                      onChange={(e) => {
+                        setNewMaterial({
+                          ...newMaterial,
+                          name: e.target.value
+                        });
+                      }}
                       className="p-2"
                     >
                       <option value="">Select Material</option>
@@ -1181,43 +1346,6 @@
                     />
                   </div>
                 </div>
-                {newMaterial.name && (
-                  <div className="mt-4">
-                    <h3>Add Custom Material ⚡</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="relative">
-                        <i className="fas fa-tools"></i>
-                        <label>Material Name</label>
-                        <input
-                          type="text"
-                          placeholder="Material Name"
-                          value={newCustomMaterial.name}
-                          onChange={(e) => setNewCustomMaterial({ ...newCustomMaterial, name: e.target.value })}
-                          className="p-2"
-                        />
-                      </div>
-                      <div className="relative">
-                        <i className="fas fa-dollar-sign"></i>
-                        <label>Cost ($)</label>
-                        <input
-                          type="number"
-                          placeholder="Enter cost"
-                          step="0.01"
-                          value={newCustomMaterial.cost}
-                          onChange={(e) => setNewCustomMaterial({ ...newCustomMaterial, cost: e.target.value })}
-                          className="p-2"
-                        />
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleAddCustomMaterial}
-                      className="w-full mt-2"
-                    >
-                      <i className="fas fa-plus"></i> Add Custom Material ⚡
-                    </button>
-                  </div>
-                )}
                 <button
                   type="button"
                   onClick={handleAddMaterial}
@@ -1225,6 +1353,65 @@
                 >
                   <i className="fas fa-plus"></i> Add Material ⚡
                 </button>
+                <div className="mt-4">
+                  <h3>Add Custom Material ⚡</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="relative">
+                      <i className="fas fa-tools"></i>
+                      <label>Material Name</label>
+                      <input
+                        type="text"
+                        placeholder="Material Name"
+                        value={newCustomMaterial.name}
+                        onChange={(e) => setNewCustomMaterial({ ...newCustomMaterial, name: e.target.value })}
+                        className="p-2"
+                      />
+                    </div>
+                    <div className="relative">
+                      <i className="fas fa-dollar-sign"></i>
+                      <label>Cost ($)</label>
+                      <input
+                        type="number"
+                        placeholder="Enter cost"
+                        step="0.01"
+                        value={newCustomMaterial.cost}
+                        onChange={(e) => setNewCustomMaterial({ ...newCustomMaterial, cost: e.target.value })}
+                        className="p-2"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddCustomMaterial}
+                    className="w-full mt-2"
+                  >
+                    <i className="fas fa-plus"></i> Add Custom Material ⚡
+                  </button>
+                </div>
+                <div className="store-search-section">
+                  <h3>Search for Items at Stores ⚡</h3>
+                  <div className="relative">
+                    <i className="fas fa-search"></i>
+                    <input
+                      type="text"
+                      placeholder="Search for an item..."
+                      value={storeSearchQuery}
+                      onChange={(e) => setStoreSearchQuery(e.target.value)}
+                      className="p-2 mb-2"
+                    />
+                  </div>
+                  {storeSearchQuery ? (
+                    <p>
+                      Search for "{storeSearchQuery}" at: 
+                      <a href={generateStoreLink('Home Depot', storeSearchQuery)} target="_blank" rel="noopener noreferrer" className="store-link-button">Home Depot</a>
+                      <a href={generateStoreLink("Lowe's", storeSearchQuery)} target="_blank" rel="noopener noreferrer" className="store-link-button">Lowe's</a>
+                      <a href={generateStoreLink('Menards', storeSearchQuery)} target="_blank" rel="noopener noreferrer" className="store-link-button">Menards</a>
+                      <a href={generateStoreLink('Grainger', storeSearchQuery)} target="_blank" rel="noopener noreferrer" className="store-link-button">Grainger</a>
+                    </p>
+                  ) : (
+                    <p>Enter an item to search for store links!</p>
+                  )}
+                </div>
                 <div className="table-container">
                   <table className="w-full">
                     <thead>
@@ -1267,34 +1454,9 @@
                   <i className="fas fa-percentage"></i>
                   <input
                     type="number"
-                    placeholder="Enter tax rate"
+                    placeholder="Enter tax rate (applied to materials only)"
                     value={costEstimate.taxRate}
                     onChange={(e) => setCostEstimate({ ...costEstimate, taxRate: e.target.value })}
-                    className="p-2"
-                  />
-                </div>
-              </div>
-              <div>
-                <h2>Running Cost ($) ⚡</h2>
-                <div className="relative">
-                  <i className="fas fa-dollar-sign"></i>
-                  <input
-                    type="number"
-                    placeholder="Enter current cost of the job"
-                    value={costEstimate.runningCost}
-                    onChange={(e) => setCostEstimate({ ...costEstimate, runningCost: e.target.value })}
-                    className="p-2"
-                  />
-                </div>
-              </div>
-              <div>
-                <h2>Next Steps ⚡</h2>
-                <div className="relative">
-                  <i className="fas fa-align-left"></i>
-                  <textarea
-                    placeholder="What’s next?"
-                    value={costEstimate.nextSteps || localStorage.getItem(`jobNextSteps_${selectedJobId}`) || ''}
-                    onChange={(e) => setCostEstimate({ ...costEstimate, nextSteps: e.target.value })}
                     className="p-2"
                   />
                 </div>
@@ -1384,20 +1546,12 @@
                         <td>${subtotal.toFixed(2)}</td>
                       </tr>
                       <tr>
-                        <td>Tax</td>
+                        <td>Tax (on Materials)</td>
                         <td>${tax.toFixed(2)}</td>
                       </tr>
                       <tr>
                         <td>Estimated Total Cost</td>
                         <td>${totalCost.toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <td>Running Cost</td>
-                        <td>${parseFloat(costEstimate.runningCost || 0).toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <td>Remaining Cost</td>
-                        <td>${remainingCost.toFixed(2)}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1412,43 +1566,48 @@
         );
       }
 
-      const userJobs = jobs.filter(job => job.createdBy === createdBy || job.createdBy === '' || !job.createdBy);
-      const runningTotal = userJobs.reduce((sum, job) => sum + parseFloat(costEstimates[job._id]?.totalCost || 0), 0);
-      const totalRunningCost = userJobs.reduce((sum, job) => sum + parseFloat(costEstimates[job._id]?.runningCost || 0), 0);
-      const totalJobs = userJobs.length;
-      const jobsInProgress = userJobs.filter(job => job.status === 'In Progress').length;
+      const activeJobs = jobs;
+      const totalJobs = activeJobs.length;
+
+      const currentDateTime = new Date().toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+        timeZone: 'America/New_York'
+      }) + ' EDT';
 
       return (
         <div className="container">
           <div className="header">
-            <i className="fas fa-bolt"></i>
-            <h1>Circle City Dashboard ⚡</h1>
+            <img src="https://i.ibb.co/SXchGTtJ/ackmelogo.jpg" alt="Circle City Electrical Logo" className="company-logo" />
+            <i className="fas fa-bolt logo-icon"></i>
+            <h1>Ackme Estimator Dashboard ⚡</h1>
           </div>
-          <div className="flex justify-end mb-4">
+          <div className="space-x-4 mb-4">
             <button
-              onClick={() => setCurrentPage('login')}
+              onClick={() => {
+                setCurrentPage('login');
+                setSelectedJobId(null);
+              }}
               className="bg-gray-500"
             >
               <i className="fas fa-sign-out-alt"></i> Logout ⚡
             </button>
           </div>
-          <p className="text-center text-lg mb-4">Welcome to the {username}! ⚡</p>
+          <p>Welcome, {username}! ⚡</p>
+          <p>Current Date and Time: {currentDateTime}</p>
+          <div className="mb-4">
+            <h2>Today's Weather for Central Indiana ⚡</h2>
+            <p>Saturday, May 31, 2025: Low 80s, warm and muggy, possible showers ⛅</p>
+            <p>Check more details on <a href="https://www.wunderground.com/weather/us/in/indianapolis" target="_blank" rel="noopener noreferrer" className="store-link-button">Weather Underground</a></p>
+          </div>
           <div className="dashboard-grid">
             <div className="dashboard-card">
               <h3>Total Jobs</h3>
               <p>{totalJobs}</p>
-            </div>
-            <div className="dashboard-card">
-              <h3>Estimated Total</h3>
-              <p>${runningTotal.toFixed(2)}</p>
-            </div>
-            <div className="dashboard-card">
-              <h3>Jobs In Progress</h3>
-              <p>{jobsInProgress}</p>
-            </div>
-            <div className="dashboard-card">
-              <h3>Running Jobs Cost</h3>
-              <p>${totalRunningCost.toFixed(2)}</p>
             </div>
           </div>
           <div className="mb-4">
@@ -1460,10 +1619,22 @@
                 <input
                   type="text"
                   placeholder="Job Name"
-                  value={jobName}
-                  onChange={(e) => setJobName(e.target.value)}
+                  value={pendingJob.jobName}
+                  onChange={(e) => setPendingJob({ ...pendingJob, jobName: e.target.value })}
                   className="p-2"
                 />
+              </div>
+              <div className="relative">
+                <i className="fas fa-tools"></i>
+                <label>Job Type</label>
+                <select
+                  value={pendingJob.jobType}
+                  onChange={(e) => setPendingJob({ ...pendingJob, jobType: e.target.value })}
+                  className="p-2"
+                >
+                  <option value="Residential">Residential</option>
+                  <option value="Commercial">Commercial</option>
+                </select>
               </div>
               <div className="relative">
                 <i className="fas fa-user"></i>
@@ -1471,8 +1642,8 @@
                 <input
                   type="text"
                   placeholder="Your name (optional)"
-                  value={createdBy}
-                  onChange={(e) => setCreatedBy(e.target.value)}
+                  value={pendingJob.createdBy}
+                  onChange={(e) => setPendingJob({ ...pendingJob, createdBy: e.target.value })}
                   className="p-2"
                 />
               </div>
@@ -1481,8 +1652,8 @@
                 <label>Date Entered</label>
                 <input
                   type="date"
-                  value={dateEntered}
-                  onChange={(e) => setDateEntered(e.target.value)}
+                  value={pendingJob.dateEntered}
+                  onChange={(e) => setPendingJob({ ...pendingJob, dateEntered: e.target.value })}
                   className="p-2"
                 />
               </div>
@@ -1491,66 +1662,50 @@
               </button>
             </form>
           </div>
-          <h2>Your Jobs ⚡</h2>
+          <h2>All Jobs ⚡</h2>
           <div className="table-container">
             <table className="w-full">
               <thead>
                 <tr>
                   <th>Job Name</th>
                   <th>Created By</th>
-                  <th>Status</th>
-                  <th>Notes</th>
                   <th>Estimated Total ($)</th>
-                  <th>Running Cost ($)</th>
-                  <th>Next Steps</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {userJobs.map(job => (
-                  <tr key={job._id}>
-                    <td>{job.jobName}</td>
-                    <td>{job.createdBy || 'N/A'}</td>
-                    <td>
-                      <select
-                        value={job.status}
-                        onChange={(e) => handleUpdateJobStatus(job._id, e.target.value)}
-                        className="p-1"
-                      >
-                        <option value="Planning">Planning</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={job.notes || localStorage.getItem(`jobNotes_${job._id}`) || ''}
-                        onChange={(e) => handleUpdateJobNotes(job._id, e.target.value)}
-                        className="w-full p-1"
-                      />
-                    </td>
-                    <td>${parseFloat(costEstimates[job._id]?.totalCost || 0).toFixed(2)}</td>
-                    <td>${parseFloat(costEstimates[job._id]?.runningCost || 0).toFixed(2)}</td>
-                    <td>{costEstimates[job._id]?.nextSteps || '-'}</td>
-                    <td className="space-x-4">
-                      <button
-                        onClick={() => {
-                          setSelectedJobId(job._id);
-                          setIsLoadingJob(true);
-                        }}
-                      >
-                        <i className="fas fa-calculator"></i> Estimate ⚡
-                      </button>
-                      <button
-                        onClick={() => handleDeleteJob(job._id)}
-                        className="bg-red-600"
-                      >
-                        <i className="fas fa-trash"></i> Delete
-                      </button>
-                    </td>
+                {activeJobs.length > 0 ? (
+                  activeJobs.map(job => (
+                    <tr key={job._id}>
+                      <td>{job.jobName}</td>
+                      <td>{job.createdBy || 'N/A'}</td>
+                      <td>${parseFloat(costEstimates[job._id]?.totalCost || 0).toFixed(2)}</td>
+                      <td className="space-x-4">
+                        <button
+                          onClick={() => {
+                            setSelectedJobId(job._id);
+                            setIsLoadingJob(true);
+                            setCurrentPage('estimate');
+                            setIsNavigating(false);
+                            console.log('Navigating to estimate page for existing jobId:', job._id);
+                          }}
+                        >
+                          <i className="fas fa-calculator"></i> Estimate ⚡
+                        </button>
+                        <button
+                          onClick={() => handleDeleteJob(job._id)}
+                          className="bg-red-600"
+                        >
+                          <i className="fas fa-trash"></i> Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="text-center">No jobs yet! Create one above! ⚡</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -1560,6 +1715,7 @@
 
     const root = createRoot(document.getElementById('root'));
     root.render(<App />);
+    console.log('App rendered successfully.');
   </script>
 </body>
 </html>
